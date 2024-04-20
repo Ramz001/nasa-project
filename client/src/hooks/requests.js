@@ -1,6 +1,6 @@
 async function httpGetPlanets() {
-  // TODO: Once API is ready.
-  // Load planets and return as JSON.
+  const res = await fetch("/planets")
+  return await res.json()
 }
 
 async function httpGetLaunches() {
