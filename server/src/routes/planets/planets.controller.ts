@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { habitablePlanets } from "../../models/planets.model";
+import { getHabitablePlanets } from "../../models/planets.model";
 
-const getAllPlanets = (req: Request, res: Response) => {
-  return res.status(200).json(habitablePlanets);
-};
+function httpGetAllPlanets(req: Request, res: Response) {
+  return res.status(200).json(getHabitablePlanets());
+}
 
-export { getAllPlanets };
+export { httpGetAllPlanets };

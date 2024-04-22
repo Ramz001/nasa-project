@@ -21,7 +21,7 @@ const isHabitablePlanet = (planet: planet) => {
   );
 };
 
-async function getPlanetsData() {
+async function loadPlanetsData() {
   const filePath = path.join(__dirname, "..", "..", "data", "kepler_data.csv");
 
   return new Promise<void>((resolve, reject) => {
@@ -40,4 +40,8 @@ async function getPlanetsData() {
   });
 }
 
-export { getPlanetsData, habitablePlanets };
+function getHabitablePlanets () {
+  return habitablePlanets
+}
+
+export { loadPlanetsData, getHabitablePlanets };
