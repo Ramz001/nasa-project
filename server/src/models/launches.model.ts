@@ -13,7 +13,7 @@ type Launch = {
 
 let latestFlightNumber = 100;
 
-const launch: Launch = {
+const launch1: Launch = {
   mission: "something",
   rocket: "very big one",
   launchDate: new Date("December 27, 2045"),
@@ -35,17 +35,17 @@ const launch2: Launch = {
   upcoming: false,
 };
 
-launches.set(launch.flightNumber, launch);
+launches.set(launch1.flightNumber, launch1);
 launches.set(launch2.flightNumber, launch2);
 
 function getAllLaunches() {
   return Array.from(launches.values());
 }
 
-function postOneLaunch(launch: any) {
+async function scheduleOneLaunch(launch: Launch) {
   latestFlightNumber++;
   launches.set(
-    launch.flightNumber,
+    latestFlightNumber,
     Object.assign(launch, {
       success: true,
       upcoming: true,
@@ -55,4 +55,21 @@ function postOneLaunch(launch: any) {
   );
 }
 
-export { getAllLaunches, postOneLaunch, Launch };
+function launchExists(flightNumber: number) {
+  if (launches.has(flightNumber)) { 
+    return true;
+  }
+  return false;
+}
+
+function abortOneLaunch(flightNumber: number) {
+  const abortedLaunch = launches.get(flightNumber);
+  if (abortedLaunch) {
+    abortedLaunch.upcoming = false;
+    abortedLaunch.success = false;
+    return abortedLaunch;
+  }
+  return new Error("Cannot abort a launch");
+}
+
+export { getAllLaunches, scheduleOneLaunch, abortOneLaunch, launchExists, Launch };
