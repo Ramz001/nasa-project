@@ -7,9 +7,10 @@ import {
   Launch,
 } from "../../models/launches.model";
 
-function httpGetAllLaunches(req: Request, res: Response) {
+async function httpGetAllLaunches(req: Request, res: Response) {
   try {
-    return res.status(200).json(getAllLaunches());
+    const launches = await getAllLaunches();
+    return res.status(200).json(launches);
   } catch (error) {
     return res.status(500).json({ error: "Cannot get launches" });
   }
@@ -39,7 +40,7 @@ async function httpPostOneLaunch(req: Request, res: Response) {
   return res.status(201).json(launch);
 }
 
-function httpAbortOneLaunch(req: Request, res: Response) {
+async function httpAbortOneLaunch(req: Request, res: Response) {
   const flightNumber = +req.params.id; // +e === Number(e)
   if (!flightNumber) {
     return res.status(400).json({ error: "Missing ID for launch!" });
@@ -47,12 +48,15 @@ function httpAbortOneLaunch(req: Request, res: Response) {
   if (typeof flightNumber !== "number") {
     return res.status(400).json({ error: "Missing correct ID format!" });
   }
-  if(!launchExists(flightNumber)){
-    return res.status(404).json({ error: "The launch does not exist!" })
+  if (await !launchExists(flightNumber)) {
+    return res.status(404).json({ error: "The launch does not exist!" });
   }
 
-  const abortedLaunch = abortOneLaunch(flightNumber);
-  return res.status(200).json(abortedLaunch)
+  const abortedLaunch = await abortOneLaunch(flightNumber);
+  if(!abortedLaunch){
+    return res.status(400).json({ error: "Launch not aborted" })
+  }
+  return res.status(200).json({ ok: true });
 }
 
 export { httpGetAllLaunches, httpPostOneLaunch, httpAbortOneLaunch };

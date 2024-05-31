@@ -10,6 +10,7 @@ function usePlanets() {
     savePlanets(fetchedPlanets);
   }, []);
 
+  console.log(planets)
   useEffect(() => {
     getPlanets();
   }, [getPlanets]);

@@ -1,4 +1,5 @@
-const launches = new Map<number, Launch>();
+import launchesMongo from "./launches.mongo";
+import planetsMongo from "./planets.mongo";
 
 type Launch = {
   mission: string;
@@ -11,65 +12,88 @@ type Launch = {
   success: boolean;
 };
 
-let latestFlightNumber = 100;
+const DEFAULT_FLIGHT_NUMBER = 100;
 
-const launch1: Launch = {
-  mission: "something",
-  rocket: "very big one",
-  launchDate: new Date("December 27, 2045"),
-  target: "Mars 132",
-  flightNumber: 1,
-  customers: ["nasa"],
-  success: false,
-  upcoming: true,
-};
-
-const launch2: Launch = {
-  mission: "something in History",
-  rocket: "smaller one",
-  launchDate: new Date("December 27, 2012"),
-  target: "Venus 123",
-  flightNumber: 2,
-  customers: ["NASA", "ISS"],
-  success: true,
-  upcoming: false,
-};
-
-launches.set(launch1.flightNumber, launch1);
-launches.set(launch2.flightNumber, launch2);
-
-function getAllLaunches() {
-  return Array.from(launches.values());
+async function getAllLaunches() {
+  try {
+    return await launchesMongo.find({}, { _id: 0, __v: 0 });
+  } catch (error) {
+    console.log("Error getting launches: " + error);
+  }
 }
 
 async function scheduleOneLaunch(launch: Launch) {
-  latestFlightNumber++;
-  launches.set(
-    latestFlightNumber,
-    Object.assign(launch, {
-      success: true,
-      upcoming: true,
-      customers: ["NASA"],
-      flightNumber: latestFlightNumber,
-    })
+  const flightNumber = await getLatestFlightNumber();
+  if (!flightNumber) {
+    throw new Error("Flight Number is undefined");
+  }
+  console.log(flightNumber);
+  const newFlightNumber = flightNumber + 1;
+
+  const newLaunch = Object.assign(launch, {
+    success: true,
+    upcoming: true,
+    customers: ["Hourglass", "Nasa"],
+    flightNumber: newFlightNumber,
+  });
+
+  return await saveLaunch(newLaunch);
+}
+
+async function launchExists(flightNumber: number) {
+  try {
+    return await launchesMongo.findOne({ flightNumber });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function saveLaunch(launch: Launch) {
+  const planet = await planetsMongo.findOne({ keplerName: launch.target });
+
+  if (!planet) {
+    throw new Error("No matching planet found");
+  }
+  await launchesMongo.findOneAndUpdate(
+    { flightNumber: launch.flightNumber },
+    launch,
+    {
+      upsert: true,
+    }
   );
 }
 
-function launchExists(flightNumber: number) {
-  if (launches.has(flightNumber)) { 
-    return true;
+async function getLatestFlightNumber() {
+  try {
+    const latestLaunch = await launchesMongo.findOne().sort("-flightNumber");
+
+    if (!latestLaunch) {
+      return DEFAULT_FLIGHT_NUMBER;
+    }
+
+    return latestLaunch.flightNumber;
+  } catch (error: any) {
+    console.log(error);
   }
-  return false;
 }
 
-function abortOneLaunch(flightNumber: number) {
-  const abortedLaunch = launches.get(flightNumber);
-  if (abortedLaunch) {
-    abortedLaunch.upcoming = false;
-    abortedLaunch.success = false;
-    return abortedLaunch;
+async function abortOneLaunch(flightNumber: number) {
+  try {
+    return await launchesMongo.updateOne(
+      {
+        flightNumber,
+      },
+      { success: false, upcoming: false }
+    );
+  } catch (error) {
+    console.log(error);
   }
-  return new Error("Cannot abort a launch");
 }
 
-export { getAllLaunches, scheduleOneLaunch, abortOneLaunch, launchExists, Launch };
+export {
+  getAllLaunches,
+  scheduleOneLaunch,
+  abortOneLaunch,
+  launchExists,
+  Launch,
+};
