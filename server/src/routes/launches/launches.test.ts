@@ -1,14 +1,15 @@
-const launchesRequest = require("supertest");
-const launchesApp = require("../../app");
+import launchesRequest from "supertest";
+import launchesApp from "../../app";
 
 describe("GET /launches", () => {
   test("main", async () => {
     await launchesRequest(launchesApp)
-      .get("/launches")
+      .get("/v1/launches")
       .expect("Content-Type", /json/)
       .expect(200);
   });
 });
+
 describe("POST /launches", () => {
   const launchMock = {
     mission: "abc",
@@ -24,7 +25,7 @@ describe("POST /launches", () => {
 
   test("Code 201", async () => {
     const response = await launchesRequest(launchesApp)
-      .post("/launches")
+      .post("/v1/launches")
       .send(launchMock)
       .expect("Content-Type", /json/)
       .expect(201);
@@ -35,9 +36,10 @@ describe("POST /launches", () => {
     expect(launchesRequestDate).toBe(responseDate);
     expect(response.body).toMatchObject(launchDataNoDate);
   });
+
   test("Missing Properties Code 400", async () => {
     const response = await launchesRequest(launchesApp)
-      .post("/launches")
+      .post("/v1/launches")
       .send(launchDataNoDate)
       .expect("Content-Type", /json/)
       .expect(400);
@@ -45,13 +47,15 @@ describe("POST /launches", () => {
       error: "Missing required lauch properties!",
     });
   });
+
   test("Invalid Date Code 400", async () => {
     const response = await launchesRequest(launchesApp)
-      .post("/launches")
-      .send({ ...launchDataNoDate, launchDate: "hello" })
+      .post("/v1/launches")
+      .send({ ...launchMock, launchDate: "hello" })
       .expect("Content-Type", /json/)
       .expect(400);
     expect(response.body).toStrictEqual({ error: "Invalid launch date!" });
   });
 });
+
 describe("DELETE /launches", () => {});

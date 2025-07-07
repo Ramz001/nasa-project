@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "install-client": "npm i  --prefix client",
-    "install-server": "npm i --prefix server",
-    "test-client": "npm run test --prefix client",
-    "test-server": "npm run test --prefix server",
-    "client": "npm start --prefix client",
-    "server": "npm start --prefix server"
+    "client:install": "npm i  --prefix client",
+    "server:install": "npm i --prefix server",
+    "client:test": "npm run test --prefix client",
+    "server:test": "npm run test --prefix server",
+    "client:dev": "npm run dev --prefix client",
+    "server:dev": "npm run dev --prefix server",
+    "server:build": "npm run build --prefix server",
+    "client:build": "npm run build --prefix client"
   },
   "keywords": [],
   "author": "",
