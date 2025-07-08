@@ -82,7 +82,7 @@ async function getAllLaunches(query: { page?: number; limit?: number }) {
     const { skip, limit } = getPagination(query);
     return await launchesMongo
       .find({}, { _id: 0, __v: 0 })
-      .sort({ flightNumber: -1 })
+      .sort({ flightNumber: 1 })
       .skip(skip)
       .limit(limit);
   } catch (error) {
