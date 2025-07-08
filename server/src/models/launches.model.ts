@@ -6,7 +6,7 @@ type Launch = {
   mission: string;
   rocket: string;
   launchDate: Date;
-  target: string;
+  target?: string;
   flightNumber: number;
   customers: string[];
   upcoming: boolean;
@@ -17,7 +17,25 @@ const DEFAULT_FLIGHT_NUMBER = 100;
 
 const SPACEX_API_URL = "https://api.spacexdata.com/v4/launches/query";
 
+async function findLaunch(filter: any) {
+  return await launchesMongo.findOne(filter);
+}
+
 async function loadLaunchesData() {
+  const firstLaunch = await findLaunch({
+    flightNumber: 1,
+    rocket: "Falcon 1",
+    mission: "FalconSat",
+  });
+
+  if (firstLaunch) {
+    console.log("Launch data already loaded");
+  } else {
+    await populateLaunches();
+  }
+}
+
+async function populateLaunches() {
   const response = await axios.post(SPACEX_API_URL, {
     query: {},
     options: {
@@ -54,6 +72,7 @@ async function loadLaunchesData() {
       success: launch.success,
       customers,
     };
+    await saveLaunch(launchDoc);
   }
 }
 
@@ -70,12 +89,18 @@ async function scheduleOneLaunch(launch: Launch) {
   if (!flightNumber) {
     throw new Error("Flight Number is undefined");
   }
+  const planet = await planetsMongo.findOne({ keplerName: launch.target });
+
+  if (!planet) {
+    throw new Error("No matching planet found");
+  }
   console.log(flightNumber);
   const newFlightNumber = flightNumber + 1;
 
   const newLaunch = Object.assign(launch, {
     success: true,
     upcoming: true,
+    target: planet.keplerName,
     customers: ["Hourglass", "Nasa"],
     flightNumber: newFlightNumber,
   });
@@ -92,11 +117,6 @@ async function launchExists(flightNumber: number) {
 }
 
 async function saveLaunch(launch: Launch) {
-  const planet = await planetsMongo.findOne({ keplerName: launch.target });
-
-  if (!planet) {
-    throw new Error("No matching planet found");
-  }
   await launchesMongo.findOneAndUpdate(
     { flightNumber: launch.flightNumber },
     launch,
