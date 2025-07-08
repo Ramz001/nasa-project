@@ -1,5 +1,6 @@
 import launchesMongo from "./launches.mongo";
 import planetsMongo from "./planets.mongo";
+import axios from "axios";
 
 type Launch = {
   mission: string;
@@ -13,6 +14,48 @@ type Launch = {
 };
 
 const DEFAULT_FLIGHT_NUMBER = 100;
+
+const SPACEX_API_URL = "https://api.spacexdata.com/v4/launches/query";
+
+async function loadLaunchesData() {
+  const response = await axios.post(SPACEX_API_URL, {
+    query: {},
+    options: {
+      pagination: false,
+      populate: [
+        {
+          path: "rocket",
+          select: {
+            name: 1,
+          },
+        },
+        {
+          path: "payloads",
+          select: {
+            customers: 1,
+          },
+        },
+      ],
+    },
+  });
+
+  const launchData = response.data.docs;
+
+  for (const launch of launchData) {
+    const payloads = launch.payloads;
+    const customers = payloads.flatMap((payload: any) => payload.customers);
+
+    const launchDoc = {
+      flightNumber: launch.flight_number,
+      mission: launch.name,
+      rocket: launch.rocket.name,
+      launchDate: launch.date_local,
+      upcoming: launch.upcoming,
+      success: launch.success,
+      customers,
+    };
+  }
+}
 
 async function getAllLaunches() {
   try {
@@ -95,5 +138,6 @@ export {
   scheduleOneLaunch,
   abortOneLaunch,
   launchExists,
+  loadLaunchesData,
   Launch,
 };

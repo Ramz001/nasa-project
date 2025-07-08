@@ -2,6 +2,7 @@ import http from "http";
 import App from "./app";
 import { loadPlanetsData } from "./models/planets.model";
 import { mongoConnect } from "./services/mongo";
+import { loadLaunchesData } from "./models/launches.model";
 
 const PORT = process.env.PORT || 4000;
 
@@ -11,7 +12,7 @@ async function startServer() {
   try {
     await mongoConnect();
     await loadPlanetsData();
-
+    await loadLaunchesData();
     server.listen(PORT, () => {
       console.log(`Listening on port ${PORT}...`);
     });

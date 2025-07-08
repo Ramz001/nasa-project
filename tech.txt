@@ -1,0 +1,52 @@
+Now the important part, assemblying concrete tech to learn / test before business only most important and flexible ones, including ones I need to learn 
+
+Design (Beginner - intermediate)
+ZTM design course, ZTM motion design course, know basics and a little more just need to get good
+
+Front-end (intermediate - advanced)
+Nextjs , redux, RTK query, React query, Shadcn + Extension, Refine.dev for admin, lexical
+
+Back-end(beginner - strong intermediate)
+node js(ztm course on the way), next routes, supabase or even [nest js + fastify (Do I need this?)]
+
+DevOps (zero - intermediate)
+docker deployment
+k8s (may need it for self hosting supabase)
+linux, server deployment and it's automation
+turborepo
+will learn basics of nx but that's it (for me speed is king)
+
+Automation (zero - intermediate)
+N8N
+
+ML and LLM integration (zero - intermediate)  
+but may need it in modern apps and I mean just using it and basic 
+to intermediate usage not training from scratch just good enough to be useful
+
+Marketing (zero - intermediate)
+Full Digital marketing course + optimizations on Next js SEO optimization and automation
+
+Database (basic / zero - intermediate)
+Postgresql (just for everything honestly this shit works), ZTM database course, may learn 
+Elastic search
+
+Testing (beginner - intermediate) 
+Mostly focus on E2E test for important parts
+Jest, Playright, React Testing library, cypress, storyboard
+
+Analytics (zero - intermediate)
+Graphana, Promethius, [Sentry(do I need this? I think I do but no idea)]
+
+Security 
+All beginner levels courses and maybe one more on tryhackme.com
+
+Stuff I will learn in my job (I'm absolutely zero at this)
+RabbitMQ 
+
+Dev Env
+Cursor, VIM (hopefully mastered it, like I did touch typing current avg speed around 75 wpm)
+ 
+P.E
+ALL lang in Typescript and opting out from learning expo and rn for now as PWA cover me for now swithing stacks is pain
+
+This is the first scaffold of my tech teck stack for fast and good business apps to bring revenue
