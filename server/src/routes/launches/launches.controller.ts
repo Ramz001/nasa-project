@@ -9,7 +9,7 @@ import {
 
 async function httpGetAllLaunches(req: Request, res: Response) {
   try {
-    const launches = await getAllLaunches();
+    const launches = await getAllLaunches(req.query);
     return res.status(200).json(launches);
   } catch (error) {
     return res.status(500).json({ error: "Cannot get launches" });
@@ -53,8 +53,8 @@ async function httpAbortOneLaunch(req: Request, res: Response) {
   }
 
   const abortedLaunch = await abortOneLaunch(flightNumber);
-  if(!abortedLaunch){
-    return res.status(400).json({ error: "Launch not aborted" })
+  if (!abortedLaunch) {
+    return res.status(400).json({ error: "Launch not aborted" });
   }
   return res.status(200).json({ ok: true });
 }

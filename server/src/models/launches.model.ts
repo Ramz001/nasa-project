@@ -1,6 +1,7 @@
 import launchesMongo from "./launches.mongo";
 import planetsMongo from "./planets.mongo";
 import axios from "axios";
+import { getPagination } from "../services/query";
 
 type Launch = {
   mission: string;
@@ -76,9 +77,14 @@ async function populateLaunches() {
   }
 }
 
-async function getAllLaunches() {
+async function getAllLaunches(query: { page?: number; limit?: number }) {
   try {
-    return await launchesMongo.find({}, { _id: 0, __v: 0 });
+    const { skip, limit } = getPagination(query);
+    return await launchesMongo
+      .find({}, { _id: 0, __v: 0 })
+      .sort({ flightNumber: -1 })
+      .skip(skip)
+      .limit(limit);
   } catch (error) {
     console.log("Error getting launches: " + error);
   }
