@@ -1,4 +1,6 @@
-import http from "http";
+import fs from "fs";
+import https from "https";
+import path from "path";
 import App from "./app";
 import { loadPlanetsData } from "./models/planets.model";
 import { mongoConnect } from "./services/mongo";
@@ -6,14 +8,20 @@ import { loadLaunchesData } from "./models/launches.model";
 
 const PORT = process.env.PORT || 4000;
 
-const server = http.createServer(App);
+const server = https.createServer(
+  {
+    key: fs.readFileSync(path.join(__dirname, "..", "key.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "..", "cert.pem")),
+  },
+  App
+);
 
 async function startServer() {
   try {
     await mongoConnect();
     await loadPlanetsData();
     await loadLaunchesData();
-    
+
     server.listen(PORT, () => {
       console.log(`Listening on port ${PORT}...`);
     });
