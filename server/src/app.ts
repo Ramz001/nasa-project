@@ -5,36 +5,31 @@ import morgan from "morgan";
 import api from "./routes/api";
 import helmet from "helmet";
 import passport from "passport";
-import { Strategy } from "passport-google-oauth20";
-import dotenv from "dotenv";
-dotenv.config();
+import session from "express-session";
+import authRouter from "./routes/auth/auth.router";
 
-const AUTH_CONFIG = {
-  callbackURL: "/auth/google/callback",
-  clientID: process.env.GOOGLE_CLIENT_ID || "",
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-};
-
-const verifyCallback = (
-  accessToken: string,
-  refreshToken: string,
-  profile: passport.Profile,
-  done: (error: any, user?: any) => void
-) => {
-  console.log(profile);
-  done(null, profile);
-};
-
-passport.use(new Strategy(AUTH_CONFIG, verifyCallback));
+const SESSION_SECRET = process.env.SESSION_SECRET || "your_session_secret";
 
 const app = express();
 
 app.use(helmet());
+app.use(
+  session({
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  }) as any
+);
 app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://localhost:3000",
   })
 );
 
@@ -42,22 +37,7 @@ app.use(morgan("short"));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
 
-app.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile"] })
-);
-
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/login",
-    session: false,
-  }),
-  (req, res) => {
-    res.redirect("/");
-  }
-);
-app.get("/auth/logout", (req, res) => {});
+app.use("/auth", authRouter);
 
 app.use("/v1/", api);
 app.get("/*", (req, res) => {
