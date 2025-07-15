@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [master, main]
 jobs:
-  build:
+  client:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -21,6 +21,28 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10.13.1
+          version: 9
       - run: pnpm install
       - run: pnpm --prefix client run build
+      - run: pnpm --prefix client run test
+
+  server:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    env:
+      CI: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - run: pnpm install
+      - run: pnpm --prefix server run build
+      - run: pnpm --prefix server run test
