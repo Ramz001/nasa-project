@@ -4,14 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "client:install": "npm i  --prefix client",
-    "server:install": "npm i --prefix server",
-    "client:test": "npm run test --prefix client",
-    "server:test": "npm run test --prefix server",
-    "client:dev": "npm run dev --prefix client",
-    "server:dev": "npm run dev --prefix server",
-    "server:build": "npm run build --prefix server",
-    "client:build": "npm run build --prefix client"
+    "install": "pnpm run client:install & pnpm run server:install",
+    "client:install": "pnpm i  --prefix client",
+    "server:install": "pnpm i --prefix server",
+    "client:test": "pnpm run test --prefix client",
+    "server:test": "pnpm run test --prefix server",
+    "client:dev": "pnpm run dev --prefix client",
+    "server:dev": "pnpm run dev --prefix server",
+    "server:build": "pnpm run build --prefix server",
+    "client:build": "pnpm run build --prefix client"
   },
   "keywords": [],
   "author": "",
