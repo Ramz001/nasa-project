@@ -4,15 +4,20 @@ on:
     branches: [master, main]
   pull_request:
     branches: [master, main]
-jobs: 
+jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    env:
+      CI: true
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js v20
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ matrix.node-version }}
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
