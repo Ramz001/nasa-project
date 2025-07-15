@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 require("dotenv").config();
 
-const MONGODB_SECRET = process.env.MONGODB_SECRET ?? "";
+const MONGODB_URI = process.env.MONGODB_URI ?? "";
 
 mongoose.connection.once("open", () => {
   console.log("MongoDB connection ready");
@@ -12,7 +12,7 @@ mongoose.connection.on("error", (err) => {
 });
 
 async function mongoConnect() {
-  await mongoose.connect(MONGODB_SECRET);
+  await mongoose.connect(MONGODB_URI);
 }
 
 async function mongoDisconnect() {
