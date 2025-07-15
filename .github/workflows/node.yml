@@ -15,4 +15,4 @@ jobs:
           node-version: '20'
       - run: npm i -g pnpm 
       - run: pnpm install
-      - run: pnpm run client:build
+      - run: pnpm run build -prefix client
