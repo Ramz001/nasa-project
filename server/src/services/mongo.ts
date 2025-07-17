@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 require("dotenv").config();
 
-const MONGODB_URI = process.env.MONGODB_URI ?? "";
+const MONGODB_URI = process.env.MONGODB_SECRET ?? "";
 
 mongoose.connection.once("open", () => {
   console.log("MongoDB connection ready");
@@ -19,4 +19,4 @@ async function mongoDisconnect() {
   await mongoose.disconnect();
 }
 
-export { mongoConnect, mongoDisconnect }; 
+export { mongoConnect, mongoDisconnect };

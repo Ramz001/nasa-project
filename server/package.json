@@ -8,7 +8,7 @@
     "dev": "nodemon src/server.ts",
     "test": "jest",
     "test-watch": "jest --watch",
-    "start": "pm2 start ./dist/server.js",
+    "start": "node ./dist/server.js",
     "build": "tsc"
   },
   "repository": {
